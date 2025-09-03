@@ -163,16 +163,16 @@ class entity {
         if (
             this.botRight[0] > platform.topLeft[0] && 
             this.botLeft[0] < platform.topRight[0] &&
-            this.botLeft[1] >= platform.topLeft[1] - 5 && // Small tolerance
-            this.botLeft[1] <= platform.topLeft[1] + 15 &&
-            this.vely <= 0 // Only when falling or not moving vertically
+            this.botLeft[1] <= platform.topLeft[1] + 10 && // Small tolerance below platform top
+            this.botLeft[1] >= platform.topLeft[1] - 10 && // Small tolerance above platform top
+            this.vely < 0 // Only when falling down
         ) {
             this.inAir = false;
             this.y = platform.topLeft[1] - this.height;
             this.collided = true;
             this.vely = 0;
             wasCollided = true;
-            console.log("Landed on platform");
+            // console.log("Landed on platform");
         }
         
         // Bottom collision (hitting head) - only when moving up
@@ -240,7 +240,7 @@ class entity {
 
         console.log("Attempting jump");
         // Fixed: Call isCollided() as a method, not a property
-        if (!this.inAir && this.collided) {
+        if (!this.inAir && this.collided && keys["ArrowUp"]) {
             this.vely = 10; 
             this.inAir = true; 
             this.collided = false; 
@@ -465,8 +465,8 @@ class Playground{
             
             bar.draw();
             bar.fill(); 
-            bar.noiseBar(player1, cat);
-            bar.isClose(player1, cat);
+            /* bar.noiseBar(player1, cat);
+            bar.isClose(player1, cat); */
             
             base.draw();
             base.coord();
