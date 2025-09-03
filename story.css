@@ -1,0 +1,27 @@
+body{
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0%;
+    background-color: #023047;
+}
+
+div{
+    
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 1vh;
+  background-color: #023047;
+  font-size: 5vh;
+  font-family: cursive;
+}
+
+p{
+    font-size: 3vh;
+    color: #e5abab;
+}

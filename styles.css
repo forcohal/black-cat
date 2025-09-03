@@ -1,0 +1,15 @@
+canvas {
+  background: #001d3d;
+  display: block;
+  margin: 0 auto;
+  border: 2px solid black;
+  height: 100%;
+  width: 100%;
+      
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+

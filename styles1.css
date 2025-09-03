@@ -1,0 +1,39 @@
+body{
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0%;
+}
+
+.menu{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 1vh;
+  
+
+  background-color: #023047;
+}
+
+button{
+  justify-content: center;
+  height: 9vh;
+  width: 50vh;
+  font-family: cursive;
+  font-size: 6vh;
+  border-radius: 2vh;
+  background-color: antiquewhite;
+  border-color: transparent;
+  cursor: pointer;
+
+
+}
+
+h1{
+  font-family: cursive;
+  color: #e5abab;   
+}
