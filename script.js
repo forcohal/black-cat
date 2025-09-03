@@ -571,7 +571,7 @@ class Playground{
             this.won = player1.win(cat);
             player1.levelUpdate(this.getCurrentLevel(), player1);
             
-            console.log("in touchh : ", player1.inTouch, " won : ", player1.won)
+            // console.log("in touchh : ", player1.inTouch, " won : ", player1.won)
             
             //console.log("velocity y: ", player1.vely);
             
