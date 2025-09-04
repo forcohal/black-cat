@@ -276,10 +276,11 @@ class entity {
 
 
     nextLevel(player1){
-        player1.reset(100,100)
-        this.won = false;
         
-        this.level += 1
+        player1.reset(1000,1000)
+        this.won = false;
+        this.level += 1;
+
     }
 
     loadLevel(player1,levels){
@@ -289,7 +290,7 @@ class entity {
 
     win(cat){ 
         if ( this.botRight[0] > cat.topLeft[0] && 
-            this.botLeft[0] < cat.topRight[0] && 
+            this.botLeft[0] < cat.topRight[0] &&
             this.botRight[1] >= cat.topLeft[1] && 
             this.botRight[1] <= cat.topLeft[1] + 10 // tolerance 
         ) { 
@@ -427,7 +428,7 @@ function update() {
     
     player1.loadLevel(player1,levels)
     console.log(player1.won)
-    //player1.reset(100,100); 
+    
     player1.isColliding(base) 
     player1.move(); 
     player1.jump(); 

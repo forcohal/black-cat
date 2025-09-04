@@ -44,6 +44,7 @@ let movingPlatforms = [
 var base = new platform(0, canvas.height - 10, canvas.width, 10)
 
 function level1(player1){
+    player1.reset(100,1000)
 
     const platforms = LEVELS[1]["platforms"]
     platforms.forEach((pltfrm) => {
@@ -55,11 +56,14 @@ function level1(player1){
         platform1.draw();
         platform1.coord();
         player1.isColliding(platform1);
+
     })
     return platforms;
 }
 
 function level2(player1){
+    player1.reset(100,1000)
+    
 
     movingPlatforms[1].draw();
     movingPlatforms[1].coord();
@@ -102,6 +106,7 @@ function level2(player1){
     
 }
 function level3(player1) {
+    
     movingPlatforms[0].draw();
     movingPlatforms[0].coord();
     movingPlatforms[0].x += movingPlatforms[0].velx;
