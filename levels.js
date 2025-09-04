@@ -132,7 +132,7 @@ function level3(player1) {
 
     
 }
-function level4() {
+function level4(player1) {
     movingPlatforms[3].draw();
     movingPlatforms[3].coord();
     movingPlatforms[3].x += movingPlatforms[3].velx*3;
@@ -177,7 +177,7 @@ function level4() {
 function level5(){
 
 }
-var example = new platform(100, canvas.height - 100, 500, 80)
+var example = new platform(200, canvas.height - 80, 500, 80)
 
 
 const AVAILABLE_LABELS = {

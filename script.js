@@ -1,49 +1,45 @@
-let keys = {};
-document.addEventListener("keydown", e => {
-    keys[e.key] = true;
-});
-document.addEventListener("keyup", e => {   
-    keys[e.key] = false;
-});
+let keys = {}; 
+document.addEventListener("keydown", e => { 
+    keys[e.key] = true; 
+}); 
+document.addEventListener("keyup", e => { 
+    keys[e.key] = false; 
+}); 
+canvas.addEventListener("click", e => { 
+    let rect = canvas.getBoundingClientRect(); 
+    let mouseX = e.clientX - rect.left; 
+    let mouseY = e.clientY - rect.top; 
+    console.log("X:", mouseX, "Y:", mouseY); 
+}); 
 
-canvas.addEventListener("click", e => {
-    let rect = canvas.getBoundingClientRect();
-    let mouseX = e.clientX - rect.left;
-    let mouseY = e.clientY - rect.top;
-    console.log("X:", mouseX, "Y:", mouseY);
-});
-
-class entity {
-    constructor(x, y, width, height) {
-        this.x = x;
-        this.y = y;
-        this.height = height;
-        this.width = width;
-        this.grav = 0.5;
-        this.vely = 3;
-        this.velx = 5;
-        this.inAir = true;
-        this.topLeft = [];
-        this.topRight = [];
-        this.botLeft = [];  
-        this.botRight = [];
-        this.collided = false;
-        this.moving = false;
-        this.action = false;
-        this.thamp = false;
-        this.dead = false;
-        this.won = false;
-        this.restart = false;
-        this.level = 0;
-        this.inTouch = false;
-    }
-
-    draw(){
-        ctx.clearRect(this.x, this.y, this.width, this.height);
-        ctx.fillStyle = "#52b788";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-    
+class entity { 
+    constructor(x, y, width, height) { 
+        this.x = x; 
+        this.y = y; 
+        this.height = height; 
+        this.width = width; 
+        this.grav = 0.5; 
+        this.vely = 3; 
+        this.velx = 5; 
+        this.inAir = true; 
+        this.topLeft = []; 
+        this.topRight = []; 
+        this.botLeft = []; 
+        this.botRight = []; 
+        this.collided = false; 
+        this.moving = false; 
+        this.action = false; 
+        this.thamp = false; 
+        this.dead = false; 
+        this.won = false; 
+        this.restart = false; 
+        this.level = 0; 
+    } 
+    draw(){ 
+        ctx.clearRect(this.x, this.y, this.width, this.height); 
+        ctx.fillStyle = "#52b788"; 
+        ctx.fillRect(this.x, this.y, this.width, this.height); 
+    } 
     drawCat(){
         //constant
         var xc = this.x + 20;
@@ -127,381 +123,329 @@ class entity {
         lines(8,7,13,19)
         lines(-8,7,-13,19)
         lines(-17,7,-13,19)
-    }
-
-    move() {
+    } 
+    move() { 
         if (keys["ArrowLeft"]){ 
             this.x -= this.velx; 
             this.moving = true;
-        }
-        else if (keys["ArrowRight"]){ 
+        } else if (keys["ArrowRight"]){ 
             this.x += this.velx; 
             this.moving = true;
-        }
-        else{
+        } else{
             this.moving = false;
-        }
-    }
-
-    coord(){
-        this.topLeft = [this.x, this.y];
-        this.topRight = [this.x + this.width, this.y];
-        this.botLeft = [this.x, this.y + this.height];
-        this.botRight = [this.x + this.width, this.y + this.height];
-    }
-
-    canvas(){
-        if(this.x < 0) this.x = 0;
-        if(this.x + this.width > canvas.width) this.x = canvas.width - this.width;    
-    }
-
-    // FIXED: Improved collision detection
-    isColliding(platform) {
-        let wasCollided = false;
-        
-        // Top collision (landing on platform) - MOST IMPORTANT
-        if (
-            this.botRight[0] > platform.topLeft[0] && 
+        } 
+    } 
+    coord(){ 
+        this.topLeft = [this.x, this.y]; 
+        this.topRight = [this.x + this.width, this.y]; 
+        this.botLeft = [this.x, this.y + this.height]; 
+        this.botRight = [this.x + this.width, this.y + this.height]; 
+    } 
+    isInAir() { 
+        if(this.y + this.height < canvas.height) { 
+            this.inAir = true; 
+        } else { 
+            this.inAir = false; 
+        } 
+        if(!this.inAir){ 
+            this.y = canvas.height - this.height; 
+        } 
+    } 
+    canvas(){ 
+        if(this.x < 0) this.x = 0; 
+        if(this.x + this.width > canvas.width) this.x = canvas.width - this.width; 
+    } 
+    isColliding(platform, color = null) { 
+        if (this.botRight[0] > platform.topLeft[0] &&
             this.botLeft[0] < platform.topRight[0] &&
-            this.botLeft[1] <= platform.topLeft[1] + 10 && // Small tolerance below platform top
-            this.botLeft[1] >= platform.topLeft[1] - 10 && // Small tolerance above platform top
-            this.vely < 0 // Only when falling down
-        ) {
-            this.inAir = false;
-            this.y = platform.topLeft[1] - this.height;
-            this.collided = true;
-            this.vely = 0;
-            wasCollided = true;
-            // console.log("Landed on platform");
-        }
-        
-        // Bottom collision (hitting head) - only when moving up
-        else if (
-            this.topRight[0] > platform.topLeft[0] &&
-            this.topLeft[0] < platform.topRight[0] &&
-            this.topLeft[1] <= platform.botLeft[1] + 5 &&
-            this.topLeft[1] >= platform.botLeft[1] - 10 &&
-            this.vely > 0 // Only when moving up
-        ) {
-            this.vely = 0; // Stop upward movement
-            this.y = platform.botLeft[1]; // Position just below platform
-            wasCollided = true;
-            console.log("Hit head on platform");
-        }
-        
-        // Side collisions (only when not landing on top)
-        else if (
-            this.botLeft[1] > platform.topLeft[1] + 5 && // Not landing on top
-            this.topLeft[1] < platform.botLeft[1] - 5    // Not hitting bottom
-        ) {
-            // Right side collision (player moving left into platform)
-            if (
-                this.topRight[0] >= platform.topLeft[0] - 5 &&
-                this.topRight[0] <= platform.topLeft[0] + 10 &&
-                this.topLeft[0] < platform.topLeft[0]
-            ) {
-                this.x = platform.topLeft[0] - this.width;
-                wasCollided = true;
-                console.log("Hit right side of platform");
-            }
-            
-            // Left side collision (player moving right into platform)
-            else if (
-                this.topLeft[0] <= platform.topRight[0] + 5 &&
-                this.topLeft[0] >= platform.topRight[0] - 10 &&
-                this.topRight[0] > platform.topRight[0]
-            ) {
-                this.x = platform.topRight[0];
-                wasCollided = true;
-                console.log("Hit left side of platform");
-            }
-        }
-
-        // Handle platform-specific effects
-        if (wasCollided && platform.platformColor) {
-            if (platform.platformColor === "red") {
-                this.dead = true;
-                console.log("Died from red platform");
-            }
-            else if (platform.platformColor === "pink") {
-                this.velx *= 0.5; // Slow down on pink platforms
-            }
-            else {
-                this.velx = 5; // Reset to normal speed
-            }
-        }
-
-        return wasCollided;
-    }
-
-    // FIXED: Jump method (was calling this.isCollided instead of this.isCollided())
-    jump(){
-        if (!keys["ArrowUp"]) return;
-
-        console.log("Attempting jump");
-        // Fixed: Call isCollided() as a method, not a property
-        if (!this.inAir && this.collided && keys["ArrowUp"]) {
+            this.botRight[1] >= platform.topLeft[1] &&
+            this.botRight[1] <= platform.topLeft[1] + 10 // tolerance 
+        ) { 
+            this.inAir = false; 
+            this.y = platform.topLeft[1] - this.height; 
+            this.collided = true; 
+            this.vely = 0; 
+            if(platform.platformColor == "red"){ 
+                this.dead = true; 
+                console.log("dead") 
+            } 
+            if(platform.platformColor == "pink"){ 
+                this.velx *= 0.2; 
+            } else{ 
+                this.velx = 5; 
+            } 
+        } 
+        // Bottom collision (hitting head) 
+        else if(this.topRight[0] > platform.topLeft[0] &&
+            this.topLeft[0] < platform.topRight[0] && 
+            this.topRight[1] <= platform.botLeft[1] && 
+            this.topRight[1] >= platform.botLeft[1] - 10 )
+            { 
+            this.vely = 0; 
+            this.y = platform.botLeft[1]; 
+            this.collided = true; 
+            if(platform.platformColor == "red"){ 
+                this.dead = true; 
+                console.log("dead") 
+            } 
+            if(platform.platformColor == "pink"){ 
+                this.velx *= 0.2; 
+            } else{ 
+                this.velx = 5; 
+            } 
+        } 
+        // Right side collision 
+        else if ( this.topRight[0] >= platform.topLeft[0] && 
+            this.topLeft[0] < platform.topLeft[0] && 
+            this.botLeft[1] > platform.topLeft[1] && 
+            this.topLeft[1] < platform.botLeft[1] ) { 
+            this.x = platform.topLeft[0] - this.width; 
+            this.collided = true; 
+            if(platform.platformColor == "red"){ 
+                this.dead = true; 
+                console.log("dead") 
+            } 
+            if(platform.platformColor == "pink"){ 
+                this.velx *= 0.2; 
+            } else{ 
+                this.velx = 5; 
+            } 
+        } 
+        // Left side collision 
+        else if ( this.topLeft[0] <= platform.topRight[0] && 
+            this.topRight[0] > platform.topRight[0] && 
+            this.botRight[1] > platform.topRight[1] && 
+            this.topRight[1] < platform.botRight[1] ) { 
+            this.x = platform.topRight[0]; 
+            this.collided = true; 
+            if(platform.platformColor == "red"){ 
+                this.dead = true; 
+                console.log("dead") 
+            } 
+            if(platform.platformColor == "pink"){ 
+                this.velx *= 0.5; 
+            } else{ 
+                this.velx = 5; 
+            } 
+        } 
+    } 
+    jump(){ 
+        if(!this.inAir && keys["ArrowUp"]) { 
             this.vely = 10; 
             this.inAir = true; 
-            this.collided = false; 
-            console.log("Jumped!");      
-        }
-    }
+            this.collided = true; 
+        } else if(this.inAir){ 
+        } 
+    } 
+    gravity() { 
+        if(!this.inAir){ 
+            this.vely = 0; 
+        } else { 
+            this.vely -= this.grav; 
+        } 
+        this.y -= this.vely; 
+    } 
+    isCollided(){ 
+        if(!this.inAir && this.moving){ 
+            this.collided = true; 
+        } else if(!this.inAir && this.moving){ 
+            this.collided = true; 
+        } else if(!this.inAir){ 
+            this.collided = true; 
+        } 
+        return this.collided; 
+    } 
+    death(platform = null){ 
+        if(this.vely < -20){ 
+            this.dead = true; 
+        } 
+        if(this.dead && this.collided){ 
+            console.log("Dead"); 
+            this.x = 80; 
+            this.y = canvas.height-90; 
+            this.vely = 3; 
+            this.dead = false; 
+        } 
+    } 
+    isThamped(){ 
+        if(this.vely < - 8){ 
+            this.thamp = true; 
+        } else{this.thamp = false;} 
+        return this.thamp; 
+    } 
 
-    gravity() {
-        if(!this.inAir){
-            this.vely = 0;
-        }
-        else {
-            this.vely -= this.grav;
-        }
-        this.y -= this.vely;
-    }
 
-    // FIXED: Better collision state management
-    isCollided(){
-        return this.collided;
-    }
-
-    death(platform = null){
-        if(this.vely < -20){   
-            this.dead = true;   
-        }
-
-        if(this.dead && this.collided){
-            console.log("Dead");
-            this.x = 80;
-            this.y = canvas.height-90;
-            this.vely = 3;
-            this.dead = false;
-        }
-    }
-
-    isThamped(){
-        if(this.vely < -8){
-            this.thamp = true;
-        }
-        else{
-            this.thamp = false;
-        }
-        return this.thamp;
-    }
-
-    win(cat){
-        if (
-            this.botRight[0] > cat.topLeft[0] && 
-            this.botLeft[0] < cat.topRight[0] &&
-            this.botRight[1] >= cat.topLeft[1] &&
-            this.botRight[1] <= cat.topLeft[1] + 10 // tolerance
-        ) {
-            this.won = true;
-            this.inTouch = true
-        }
-
-        // Bottom collision (hitting head)
-        else if (
-            this.topRight[0] > cat.topLeft[0] &&
-            this.topLeft[0] < cat.topRight[0] &&
-            this.topRight[1] <= cat.botLeft[1] &&
-            this.topRight[1] >= cat.botLeft[1] - 10
-        ) {
-            this.won = true;
-            this.inTouch = true
-        }
-
-        // Right side collision
-        else if (
-            this.topRight[0] >= cat.topLeft[0] &&
-            this.topLeft[0] < cat.topLeft[0] &&
-            this.botLeft[1] > cat.topLeft[1] &&
-            this.topLeft[1] < cat.botLeft[1]
-        ) {
-            this.won = true;
-            this.inTouch = true
-        }
-
-        // Left side collision
-        else if (
-            this.topLeft[0] <= cat.topRight[0] &&
-            this.topRight[0] > cat.topRight[0] &&
-            this.botRight[1] > cat.topRight[1] &&
-            this.topRight[1] < cat.botRight[1]
-        ) {
-            this.won = true;
-            this.inTouch = true
-        }
-
-        else{
-            this.won = false; 
-            this.restart = false; 
-            this.inTouch = false
-        }
-
-        return this.won
-    }
-
-    resetLevel() {
-        this.won = false
-    }
-    
-    reset(resetX, resetY){
-        this.x = resetX;
-        this.y = resetY;
-    }
-
-    levelUpdate(currentLevel, player1) {
-        currentLevel(player1)
-    }
-}
-
-class noise{
-    constructor(x, y, width, height) {
-        this.x = x;
-        this.y = y;
-        this.height = height;
-        this.width = width;
-        this.varWidth = 0.5;
-        this.inc = 7;
-    }
-
-    draw(){
-        ctx.clearRect(this.x, this.y,  this.width, this.height);
-        ctx.fillStyle = "#f7ede2";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-
-    fill(){
-        ctx.clearRect(this.x, this.y, this.varWidth, this.height);
-        ctx.fillStyle = "#750d37";
-        ctx.fillRect(this.x, this.y, this.varWidth, this.height);
-    }
-
-    isClose(entity1, entity2){
-        let distX = entity1.x - entity2.x;
-        let distY = entity1.y - entity2.y;
-        let distance = Math.sqrt(distX * distX + distY * distY);
-        if(distance < 1000 && entity1.moving){
-            this.inc += 0.5;
-        }
-        else{
-            this.inc = 7;
-        }
-    }
-
-    noiseBar(entity,cats){
-        let collided = entity.isCollided();
-        var varWidth = this.varWidth;
-        if(collided && entity.moving){
-            if(this.varWidth < this.width){
-                this.varWidth += this.inc; // normal walking noise
-            }
-        }
-        if(entity.inAir && entity.moving && entity.vely > -6){
-            this.varWidth = varWidth;
-        }
-        if(entity.restart){
-            this.varWidth = 0;
-        }
-        //thamp noise
-        else if(entity.isThamped()){
-            if(this.varWidth < this.width ){
-                this.varWidth += this.inc * 6; // thamp noise
-            }
-            else if(this.varWidth += this.inc * 3 >= this.width){
-                this.varWidth = this.width;
-            }
-        }
-        else{
-            if(this.varWidth > 0){
-                this.varWidth -= 1.3; // slowly fade noise
-            }
-        }
-
-        if(this.varWidth >= this.width){
-            cats.x += cats.velx;
-            if(cats.x + cats.width > canvas.width ){
-                entity.dead = true;
-            }
-        }
-
-        if(entity.dead){
-            this.varWidth = 0;
-        }
-    }
-}
-
-class Playground{
-    constructor(){
-        this.player1 = new entity(900, canvas.height - 40, 40, 40);
-        this.cat = new entity(canvas.width - 60, 100, 40, 45);
-        this.bar = new noise(375, 50, 0.5 * canvas.width, 20);
-
-        this.won = false
-        this.currentLevel = 1
-    }
-
-    loadNextLevel(){
-        this.won = false
-        this.player1.reset(100, 1000)
-        this.currentLevel += 1
-    }
-
-    getCurrentLevel(){
-        return AVAILABLE_LABELS[this.currentLevel]
-    }
-
-    update() {
-        if(this.won){
-            this.loadNextLevel()
-        }
-        else {
-            var bar = this.bar
-            var cat = this.cat
-            var player1 = this.player1
-            
-            console.log("in air : ",player1.inAir, " is  collided", player1.isCollided())
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            bar.draw();
-            bar.fill(); 
-            /* bar.noiseBar(player1, cat);
-            bar.isClose(player1, cat); */
-            
-            base.draw();
-            base.coord();
-
-            example.draw();
-            example.coord();
-            
-            player1.canvas();               // keep player in canvas
-            player1.coord();                // update player coords first
-            
-            // FIXED: Check collisions with both platforms
-            player1.isColliding(base);      // check base collision
-            player1.isColliding(example);   // check example platform collision
-            
-            player1.move();
-            player1.jump();
-            player1.gravity();
-            player1.draw();
-            player1.death();
-            
-            this.won = player1.win(cat);
-            player1.levelUpdate(this.getCurrentLevel(), player1);
-            
-            console.log("in touchh : ", player1.inTouch, " won : ", player1.won)
-            
-            cat.canvas();               // keep cat in canvas
-            cat.coord();                // update cat coords first
-            cat.isColliding(base);      // check ground collision for cat
-            cat.gravity();
-            cat.drawCat()
-        }
+    nextLevel(player1){
+        player1.reset(100,100)
+        this.won = false;
         
-        requestAnimationFrame(() => this.update());
+        this.level += 1
     }
-}
 
-const playground = new Playground()
-playground.update()
+    loadLevel(player1,levels){
+        return levels[this.level](player1);
+    }
+
+
+    win(cat){ 
+        if ( this.botRight[0] > cat.topLeft[0] && 
+            this.botLeft[0] < cat.topRight[0] && 
+            this.botRight[1] >= cat.topLeft[1] && 
+            this.botRight[1] <= cat.topLeft[1] + 10 // tolerance 
+        ) { 
+            this.won = true; 
+           
+            this.restart = true; 
+        } 
+        // Bottom collision (hitting head) 
+        else if ( this.topRight[0] > cat.topLeft[0] && 
+            this.topLeft[0] < cat.topRight[0] && 
+            this.topRight[1] <= cat.botLeft[1] && 
+            this.topRight[1] >= cat.botLeft[1] - 10 ) { 
+            this.won = true; 
+            
+            this.restart = true; 
+        } 
+        // Right side collision 
+        else if ( this.topRight[0] >= cat.topLeft[0] && 
+            this.topLeft[0] < cat.topLeft[0] && 
+            this.botLeft[1] > cat.topLeft[1] && 
+            this.topLeft[1] < cat.botLeft[1] ) { 
+            this.won = true; 
+             
+            this.restart = true; 
+        } 
+        // Left side collision 
+        else if ( this.topLeft[0] <= cat.topRight[0] && 
+            this.topRight[0] > cat.topRight[0] && 
+            this.botRight[1] > cat.topRight[1] && 
+            this.topRight[1] < cat.botRight[1] ) { 
+            this.won = true; 
+            
+            this.restart = true; 
+        } else{
+            this.won = false; 
+            this.restart = false
+        }
+    } 
+    reset(resetX, resetY){ 
+        if(this.restart){ 
+            this.x = resetX; 
+            this.y = resetY; 
+        } 
+    } 
+} 
+
+class noise{ 
+    constructor(x, y, width, height) { 
+        this.x = x; 
+        this.y = y; 
+        this.height = height; 
+        this.width = width; 
+        this.varWidth = 0.5; 
+        this.inc = 7; 
+    } 
+    draw(){ 
+        ctx.clearRect(this.x, this.y, this.width, this.height); 
+        ctx.fillStyle = "#f7ede2"; 
+        ctx.fillRect(this.x, this.y, this.width, this.height); 
+    } 
+    fill(){ 
+        ctx.clearRect(this.x, this.y, this.varWidth, this.height); 
+        ctx.fillStyle = "#750d37"; 
+        ctx.fillRect(this.x, this.y, this.varWidth, this.height); 
+    } 
+    isClose(entity1, entity2){ 
+        let distX = entity1.x - entity2.x; 
+        let distY = entity1.y - entity2.y; 
+        let distance = Math.sqrt(distX * distX + distY * distY); 
+        if(distance < 1000 && entity1.moving){ 
+            this.inc += 0.5; 
+            console.log("close"); 
+        } else{
+            this.inc = 7;
+        } 
+    } 
+    noiseBar(entity,cats){ 
+        let collided = entity.isCollided(); 
+        var varWidth = this.varWidth; 
+        if(collided && entity.moving){ 
+            if(this.varWidth < this.width){ 
+                this.varWidth += this.inc; 
+            } 
+        } 
+        if(entity.inAir && entity.moving && entity.vely > -6){ 
+            this.varWidth = varWidth; 
+            console.log("hi") 
+        } 
+        if(entity.restart){ 
+            this.varWidth = 0; 
+        } 
+        //thamp noise 
+        else if(entity.isThamped()){ 
+            if(this.varWidth < this.width ){ 
+                this.varWidth += this.inc * 6; 
+            } else if(this.varWidth += this.inc * 3 >= this.width){ 
+                this.varWidth = this.width; 
+            } 
+        } else{ 
+            if(this.varWidth > 0){ 
+                this.varWidth -= 1.3; 
+            } 
+        } 
+        if(this.varWidth >= this.width){ 
+            cats.x += cats.velx; 
+            if(cats.x + cats.width > canvas.width ){ 
+                entity.dead = true; 
+            } 
+        } 
+        if(entity.dead){ 
+            this.varWidth = 0; 
+        } 
+    } 
+} 
+
+var player1 = new entity(900, canvas.height - 40, 40, 40); 
+var cat = new entity(canvas.width - 60, 100, 40,45); 
+var bar = new noise(375, 50, 0.5 * canvas.width, 20,); 
+var levels = [level1, level2, level3, level4]; 
+
+
+
+
+function update() {   
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+    bar.draw(); 
+    bar.fill(); 
+    /* bar.noiseBar(player1, cat); 
+    bar.isClose(player1, cat);  */
+    base.draw(); 
+    base.coord(); 
+    player1.canvas(); 
+    player1.coord(); 
+    player1.isInAir(); 
+    
+    player1.loadLevel(player1,levels)
+    console.log(player1.won)
+    //player1.reset(100,100); 
+    player1.isColliding(base) 
+    player1.move(); 
+    player1.jump(); 
+    player1.gravity(); 
+    player1.draw(); 
+    player1.death(); 
+    player1.win(cat); 
+    if(player1.won){
+        player1.nextLevel(player1);
+    }
+    cat.canvas(); 
+    cat.coord(); 
+    cat.isInAir(); 
+    cat.isColliding(base); 
+    cat.gravity(); 
+    cat.drawCat(); 
+    requestAnimationFrame(update); 
+} 
+
+
+    update();
