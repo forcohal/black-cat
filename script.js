@@ -285,10 +285,7 @@ class entity {
         return this.thamp; 
     } 
 
-    /* catReset(catx,caty){
-        this.x = catx
-        this.y = caty
-    } */
+    
 
     nextLevel(player1,cats){
         
@@ -305,7 +302,7 @@ class entity {
 
     loadLevel(player1,levels,cats = null){
         player1.reset(100,1000)
-        cats.reset(500,500)
+        cats.reset(1200,500)
         return levels[this.level](player1, cats);
     }
 
@@ -439,7 +436,7 @@ class noise{
         
         if(entity.dead){ 
             this.varWidth = 0;
-            cats.x = 900;
+            cats.x = 1200;
             cats.y = 600;
             entity.x = 100;  // Always reset to starting x position
             entity.y = canvas.height - 40;
@@ -450,7 +447,7 @@ class noise{
 
 
 var player1 = new entity(100, canvas.height - 40, 40, 70); 
-var cat = new entity(canvas.width - 200, 800, 40,45); 
+var cat = new entity(1200, 800, 40,45); 
 var bar = new noise(375, 50, 0.5 * canvas.width, 20,); 
 var levels = [level1, level2, level3, level4]; 
 
@@ -474,8 +471,8 @@ function update() {
     player1.coord(); 
     player1.isInAir(); 
     player1.death();
-    player1.loadLevel(player1,levels, cat)
-    
+    //player1.loadLevel(player1,levels, cat)
+    level6(player1, cat)
     
     
     player1.isColliding(base) 
