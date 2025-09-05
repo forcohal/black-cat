@@ -271,12 +271,10 @@ class entity {
             this.dead = true; 
         } 
         if(this.dead && this.collided){ 
-            //console.log("Dead"); 
-           /* this.x = 80; 
-            this.y = canvas.height-90; */ 
+             
             this.vely = 3; 
-            this.dead = false; 
             this.restart = true;
+            this.dead = false; 
         } 
         return this.dead;
     } 
@@ -307,6 +305,7 @@ class entity {
 
     loadLevel(player1,levels,cats = null){
         player1.reset(100,1000)
+        cats.reset(500,500)
         return levels[this.level](player1, cats);
     }
 
@@ -357,8 +356,7 @@ class entity {
             this.x = resetX; 
             this.y = resetY; 
             //console.log("reset called!")
-        } 
-        
+        }  
     }
 } 
 
@@ -370,13 +368,15 @@ class noise{
         this.width = width; 
         this.varWidth = 0.5; 
         this.inc = 7; 
-    } 
+    }
+
     draw(){ 
         ctx.clearRect(this.x, this.y, this.width, this.height); 
         ctx.fillStyle = "#f7ede2"; 
         ctx.fillRect(this.x, this.y, this.width, this.height); 
         
-    } 
+    }
+
     fill(){ 
         ctx.clearRect(this.x, this.y, this.varWidth, this.height); 
         ctx.fillStyle = "#750d37"; 
@@ -396,7 +396,7 @@ class noise{
         } else{
             this.inc = 7;
         } 
-    } 
+    }
     noiseBar(entity,cats){ 
         let collided = entity.isCollided(); 
         var varWidth = this.varWidth; 
@@ -407,7 +407,7 @@ class noise{
         } 
         if(entity.inAir && entity.moving && entity.vely > -6){ 
             this.varWidth = varWidth; 
-            console.log("hi") 
+            
         } 
         if(entity.restart){ 
             this.varWidth = 0; 
@@ -426,9 +426,7 @@ class noise{
             cats.x += cats.velx + 5;
             
             if(cats.x -50 > canvas.width ){ 
-                entity.dead = true;
-                
-                
+                entity.dead = true;  
             }
 
         } 
@@ -442,13 +440,17 @@ class noise{
         if(entity.dead){ 
             this.varWidth = 0;
             cats.x = 900;
-            entity.restart = true 
+            cats.y = 600;
+            entity.x = 100;  // Always reset to starting x position
+            entity.y = canvas.height - 40;
+            entity.restart = true;
         } 
     } 
 } 
 
+
 var player1 = new entity(100, canvas.height - 40, 40, 70); 
-var cat = new entity(900, 800, 40,45); 
+var cat = new entity(canvas.width - 200, 800, 40,45); 
 var bar = new noise(375, 50, 0.5 * canvas.width, 20,); 
 var levels = [level1, level2, level3, level4]; 
 

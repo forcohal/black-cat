@@ -48,12 +48,13 @@ var base = new platform(0, canvas.height - 10, canvas.width, 10)
 
 
 function level1(player1, cats){
-    
-    player1.reset(100,1000)
-    cats.reset(900, 80)
-    
-    
+    if(player1.dead || player1.restart){
+        console.log("loaded death : ", player1.dead)
+        player1.reset(100,1000)
+        cats.reset(1200, 80)
+    }
 
+    
     const platforms = LEVELS[1]["platforms"]
     platforms.forEach((pltfrm) => {
         const x = pltfrm["x"]
@@ -69,14 +70,13 @@ function level1(player1, cats){
     return platforms;
 }
 function level2(player1, cat){
-    if(player1.dead){
+    if(player1.dead || player1.restart){
         console.log("loaded death : ", player1.dead)
-        player1.reset(500,500)
-    
+        player1.reset(50,400)
+        cat.reset(500, 600)
     }
     
-    player1.reset(20,400)
-
+     
     let platforms = [     
         new platform(0, canvas.height-150, 80, 20),
     ]
