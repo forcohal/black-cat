@@ -46,33 +46,6 @@ let movingPlatforms = [
 
 var base = new platform(0, canvas.height - 10, canvas.width, 10)
 
-function level2(player1, cat){
-    if(player1.dead){
-        console.log("loaded death : ", player1.dead)
-        player1.reset(500,500)
-    
-    }
-    
-    player1.reset(50,500)
-
-    let platforms = [     
-        new platform(0, canvas.height-90, 80, 20),
-    ]
-
-    for(var i = 0; i < platforms.length; i++){
-        platforms[i].draw();
-        platforms[i].coord()
-        player1.isColliding(platforms[i]);
-    }
-    movingPlatforms[0].draw();
-    movingPlatforms[0].coord();
-    movingPlatforms[0].x += movingPlatforms[0].velx * 1.7;
-    if(movingPlatforms[0].x < 10 || movingPlatforms[0].x > 800)
-        {
-            movingPlatforms[0].velx *= -1;
-    }
-    player1.isColliding(movingPlatforms[0]);
-}
 
 function level1(player1, cats){
     
@@ -95,6 +68,35 @@ function level1(player1, cats){
     })
     return platforms;
 }
+function level2(player1, cat){
+    if(player1.dead){
+        console.log("loaded death : ", player1.dead)
+        player1.reset(500,500)
+    
+    }
+    
+    player1.reset(20,400)
+
+    let platforms = [     
+        new platform(0, canvas.height-150, 80, 20),
+    ]
+
+    for(var i = 0; i < platforms.length; i++){
+        platforms[i].draw();
+        platforms[i].coord()
+        player1.isColliding(platforms[i]);
+    }
+    movingPlatforms[0].draw();
+    movingPlatforms[0].coord();
+    movingPlatforms[0].x += movingPlatforms[0].velx * 1.7;
+    if(movingPlatforms[0].x < 10 || movingPlatforms[0].x > 800)
+        {
+            movingPlatforms[0].velx *= -1;
+    }
+    player1.isColliding(movingPlatforms[0]);
+}
+
+
 
 function level3(player1, cats){
     player1.reset(200,1000)

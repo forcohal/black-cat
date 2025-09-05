@@ -37,8 +37,19 @@ class entity {
     } 
     draw(){ 
         ctx.clearRect(this.x, this.y, this.width, this.height); 
-        ctx.fillStyle = "#52b788"; 
-        ctx.fillRect(this.x, this.y, this.width, this.height); 
+        ctx.fillStyle = "#00afb9"; 
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillStyle = "#ccdbdc" 
+        ctx.fillRect(this.x, this.y + this.height/2 + 20, this.width, 15); 
+        ctx.clearRect(this.x + 15, this.y +  this.height/2 + 20, this.width/4,  16); 
+        
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.x + this.width/2, this.y + 10, 25, 0, Math.PI * 2);
+        ctx.fillStyle = "#fdf0d5";
+        ctx.fill();
+        
+        
     } 
     drawCat(){
         //constant
@@ -436,7 +447,7 @@ class noise{
     } 
 } 
 
-var player1 = new entity(100, canvas.height - 40, 40, 40); 
+var player1 = new entity(100, canvas.height - 40, 40, 70); 
 var cat = new entity(900, 800, 40,45); 
 var bar = new noise(375, 50, 0.5 * canvas.width, 20,); 
 var levels = [level1, level2, level3, level4]; 
@@ -477,7 +488,7 @@ function update() {
     cat.isInAir(); 
     cat.gravity(); 
     cat.drawCat()
-    cat.isColliding(base); 
+    cat.isColliding(base);
     
     
 
