@@ -261,11 +261,11 @@ class entity {
         } 
         if(this.dead && this.collided){ 
             //console.log("Dead"); 
-            /* this.x = 80; 
+           /* this.x = 80; 
             this.y = canvas.height-90; */ 
-            this.restart = true;
             this.vely = 3; 
             this.dead = false; 
+            this.restart = true;
         } 
         return this.dead;
     } 
@@ -295,7 +295,7 @@ class entity {
     }
 
     loadLevel(player1,levels,cats = null){
-        player1.reset(100,100)
+        player1.reset(100,1000)
         return levels[this.level](player1, cats);
     }
 
@@ -415,7 +415,8 @@ class noise{
             cats.x += cats.velx + 5;
             
             if(cats.x -50 > canvas.width ){ 
-                entity.dead = true; 
+                entity.dead = true;
+                
                 
             }
 
@@ -429,13 +430,14 @@ class noise{
         
         if(entity.dead){ 
             this.varWidth = 0;
-            cats.x = 900 
+            cats.x = 900;
+            entity.restart = true 
         } 
     } 
 } 
 
 var player1 = new entity(100, canvas.height - 40, 40, 40); 
-var cat = new entity(canvas.width - 300, 800, 40,45); 
+var cat = new entity(900, 800, 40,45); 
 var bar = new noise(375, 50, 0.5 * canvas.width, 20,); 
 var levels = [level1, level2, level3, level4]; 
 
@@ -443,7 +445,6 @@ var levels = [level1, level2, level3, level4];
 
 
 function update() {
-    console.log("cats position : ", cat.x)
      if(player1.won){
         player1.nextLevel(player1, cat);
         cat.restart = true;
@@ -459,7 +460,8 @@ function update() {
     player1.canvas(); 
     player1.coord(); 
     player1.isInAir(); 
-    
+    player1.death();
+    player1.loadLevel(player1,levels, cat)
     
     
     
@@ -468,8 +470,7 @@ function update() {
     player1.jump(); 
     player1.gravity(); 
     player1.draw(); 
-    player1.death();
-    player1.loadLevel(player1,levels, cat)
+    
     player1.win(cat); 
     //cat.canvas(); 
     cat.coord(); 
