@@ -260,12 +260,14 @@ class entity {
             this.dead = true; 
         } 
         if(this.dead && this.collided){ 
-            console.log("Dead"); 
-            this.x = 80; 
-            this.y = canvas.height-90; 
+            //console.log("Dead"); 
+            /* this.x = 80; 
+            this.y = canvas.height-90; */ 
+            this.restart = true;
             this.vely = 3; 
             this.dead = false; 
         } 
+        return this.dead;
     } 
     isThamped(){ 
         if(this.vely < - 8){ 
@@ -274,17 +276,27 @@ class entity {
         return this.thamp; 
     } 
 
+    /* catReset(catx,caty){
+        this.x = catx
+        this.y = caty
+    } */
 
-    nextLevel(player1){
+    nextLevel(player1,cats){
         
-        player1.reset(1000,1000)
+        player1.reset(100,1000)
+        //cats.reset(100,800)
+        cats.restart = false;
+        //cats.reset(1000,800)
+        
+        //cats.reset(100,900)
         this.won = false;
         this.level += 1;
 
     }
 
-    loadLevel(player1,levels){
-        return levels[this.level](player1);
+    loadLevel(player1,levels,cats = null){
+        player1.reset(100,100)
+        return levels[this.level](player1, cats);
     }
 
 
@@ -330,11 +342,13 @@ class entity {
         }
     } 
     reset(resetX, resetY){ 
-        if(this.restart){ 
+        if(this.won || this.dead || this.restart){ 
             this.x = resetX; 
             this.y = resetY; 
+            //console.log("reset called!")
         } 
-    } 
+        
+    }
 } 
 
 class noise{ 
@@ -350,11 +364,16 @@ class noise{
         ctx.clearRect(this.x, this.y, this.width, this.height); 
         ctx.fillStyle = "#f7ede2"; 
         ctx.fillRect(this.x, this.y, this.width, this.height); 
+        
     } 
     fill(){ 
         ctx.clearRect(this.x, this.y, this.varWidth, this.height); 
         ctx.fillStyle = "#750d37"; 
         ctx.fillRect(this.x, this.y, this.varWidth, this.height); 
+
+        ctx.font = "1000 20px  Comic Sans MS";
+        ctx.fillStyle = "#2b2d42 ";   // text color
+        ctx.fillText("Noise Bar", 700, 67);
     } 
     isClose(entity1, entity2){ 
         let distX = entity1.x - entity2.x; 
@@ -389,62 +408,80 @@ class noise{
             } else if(this.varWidth += this.inc * 3 >= this.width){ 
                 this.varWidth = this.width; 
             } 
-        } else{ 
+
+        } 
+        else if(this.varWidth >= this.width){ 
+            this.varWidth = this.width
+            cats.x += cats.velx + 5;
+            
+            if(cats.x -50 > canvas.width ){ 
+                entity.dead = true; 
+                
+            }
+
+        } 
+        
+        else{ 
             if(this.varWidth > 0){ 
                 this.varWidth -= 1.3; 
             } 
         } 
-        if(this.varWidth >= this.width){ 
-            cats.x += cats.velx; 
-            if(cats.x + cats.width > canvas.width ){ 
-                entity.dead = true; 
-            } 
-        } 
+        
         if(entity.dead){ 
-            this.varWidth = 0; 
+            this.varWidth = 0;
+            cats.x = 900 
         } 
     } 
 } 
 
-var player1 = new entity(900, canvas.height - 40, 40, 40); 
-var cat = new entity(canvas.width - 60, 100, 40,45); 
+var player1 = new entity(100, canvas.height - 40, 40, 40); 
+var cat = new entity(canvas.width - 300, 800, 40,45); 
 var bar = new noise(375, 50, 0.5 * canvas.width, 20,); 
 var levels = [level1, level2, level3, level4]; 
 
 
 
 
-function update() {   
+function update() {
+    console.log("cats position : ", cat.x)
+     if(player1.won){
+        player1.nextLevel(player1, cat);
+        cat.restart = true;
+        
+    }  
     ctx.clearRect(0, 0, canvas.width, canvas.height); 
     bar.draw(); 
     bar.fill(); 
-    /* bar.noiseBar(player1, cat); 
-    bar.isClose(player1, cat);  */
-    base.draw(); 
+    bar.noiseBar(player1, cat); 
+    bar.isClose(player1, cat); 
+    base.draw();
     base.coord(); 
     player1.canvas(); 
     player1.coord(); 
     player1.isInAir(); 
     
-    player1.loadLevel(player1,levels)
-    console.log(player1.won)
+    
+    
     
     player1.isColliding(base) 
     player1.move(); 
     player1.jump(); 
     player1.gravity(); 
     player1.draw(); 
-    player1.death(); 
+    player1.death();
+    player1.loadLevel(player1,levels, cat)
     player1.win(cat); 
-    if(player1.won){
-        player1.nextLevel(player1);
-    }
-    cat.canvas(); 
+    //cat.canvas(); 
     cat.coord(); 
     cat.isInAir(); 
-    cat.isColliding(base); 
     cat.gravity(); 
-    cat.drawCat(); 
+    cat.drawCat()
+    cat.isColliding(base); 
+    
+    
+
+    cat.restart = false;
+     
     requestAnimationFrame(update); 
 } 
 
