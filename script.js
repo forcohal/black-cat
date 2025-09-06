@@ -33,7 +33,9 @@ class entity {
         this.dead = false; 
         this.won = false; 
         this.restart = false; 
-        this.level = 0; 
+        this.level = 0;
+        this.tries = 0;
+
     } 
     draw(){ 
         ctx.clearRect(this.x, this.y, this.width, this.height); 
@@ -177,7 +179,8 @@ class entity {
             this.collided = true; 
             this.vely = 0; 
             if(platform.platformColor == "red"){ 
-                this.dead = true; 
+                this.dead = true;
+                //this.tries++;
                 console.log("dead") 
             } 
             if(platform.platformColor == "pink"){ 
@@ -197,6 +200,7 @@ class entity {
             this.collided = true; 
             if(platform.platformColor == "red"){ 
                 this.dead = true; 
+                //this.tries++;
                 console.log("dead") 
             } 
             if(platform.platformColor == "pink"){ 
@@ -214,6 +218,7 @@ class entity {
             this.collided = true; 
             if(platform.platformColor == "red"){ 
                 this.dead = true; 
+                //this.tries++;
                 console.log("dead") 
             } 
             if(platform.platformColor == "pink"){ 
@@ -231,6 +236,7 @@ class entity {
             this.collided = true; 
             if(platform.platformColor == "red"){ 
                 this.dead = true; 
+                //this.tries++;
                 console.log("dead") 
             } 
             if(platform.platformColor == "pink"){ 
@@ -268,7 +274,8 @@ class entity {
     } 
     death(platform = null){ 
         if(this.vely < -20){ 
-            this.dead = true; 
+            this.dead = true;
+            //this.tries++;
         } 
         if(this.dead && this.collided){ 
              
@@ -301,9 +308,13 @@ class entity {
     }
 
     loadLevel(player1,levels,cats = null){
-        player1.reset(100,1000)
-        cats.reset(1200,500)
-        return levels[this.level](player1, cats);
+        if(this.level >= levels.length){
+            window.location.href = "story2.html";
+        }else{
+            player1.reset(100,1000)
+            cats.reset(1200,500)
+            return levels[this.level](player1, cats);
+        }
     }
 
 
@@ -369,7 +380,7 @@ class noise{
 
     draw(){ 
         ctx.clearRect(this.x, this.y, this.width, this.height); 
-        ctx.fillStyle = "#f7ede2"; 
+        ctx.fillStyle = "#f8f9fa"; 
         ctx.fillRect(this.x, this.y, this.width, this.height); 
         
     }
@@ -423,7 +434,8 @@ class noise{
             cats.x += cats.velx + 5;
             
             if(cats.x -50 > canvas.width ){ 
-                entity.dead = true;  
+                entity.dead = true; 
+                entity.tries++ 
             }
 
         } 
@@ -443,13 +455,26 @@ class noise{
             entity.restart = true;
         } 
     } 
+
+    counts(entity){
+        
+        ctx.font = "1000 20px  Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace";
+        ctx.fillStyle = "#ccff33";   // text color
+        ctx.fillText(`cat caught : ${entity.level}`, 0, 17);
+        if(entity.dead){
+            entity.tries++;
+        }
+        ctx.font = "1000 20px  Lucida Console,Lucida Sans Typewriter,monaco,Bitstream Vera Sans Mono,monospace";
+        ctx.fillStyle = "#ccff33";   // text color
+        ctx.fillText(`Attempts counter : ${entity.tries}`, 0, 37);
+    }
 } 
 
 
 var player1 = new entity(100, canvas.height - 40, 40, 70); 
 var cat = new entity(1200, 800, 40,45); 
 var bar = new noise(375, 50, 0.5 * canvas.width, 20,); 
-var levels = [level1, level2, level3, level4]; 
+var levels = [level1, level2, level3, level4, level5]; 
 
 
 
@@ -464,15 +489,16 @@ function update() {
     bar.draw(); 
     bar.fill(); 
     bar.noiseBar(player1, cat); 
-    bar.isClose(player1, cat); 
+    bar.isClose(player1, cat);
+     
     base.draw();
     base.coord(); 
     player1.canvas(); 
     player1.coord(); 
     player1.isInAir(); 
     player1.death();
-    //player1.loadLevel(player1,levels, cat)
-    level6(player1, cat)
+    player1.loadLevel(player1,levels, cat)
+    
     
     
     player1.isColliding(base) 
@@ -488,6 +514,7 @@ function update() {
     cat.gravity(); 
     cat.drawCat()
     cat.isColliding(base);
+    bar.counts(player1)
     
     
 

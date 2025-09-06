@@ -28,14 +28,10 @@ class Platform {
     }
 }
 
-// =============================================================================
-// PLATFORM INSTANCES
-// =============================================================================
 
-// Moving platforms for different levels
 let movingPlatforms = [
-    // Level 2
-    new Platform(10, canvas.height - 90, 10, 80, "red"),
+    // Level 3
+    new Platform(40, canvas.height - 90, 10, 80, "red"),
     
     // Level 4
     new Platform(740, canvas.height - 400, 160, 20, "#a2d2ff"),
@@ -117,13 +113,13 @@ function level2(player1, cats) {
 function level3(player1, cat) {
     if (player1.dead || player1.restart) {
         console.log("loaded death : ", player1.dead);
-        player1.reset(20, 400);
+        player1.reset(0, 400);
         cat.reset(1200, 600);
     }
     
     // Static platforms
     let platforms = [     
-        new Platform(0, canvas.height - 150, 80, 20),
+        new Platform(0, canvas.height - 150, 40, 20),
     ];
 
     // Process static platforms
@@ -138,7 +134,7 @@ function level3(player1, cat) {
     movingPlatforms[0].coord();
     movingPlatforms[0].x += movingPlatforms[0].velx * 3;
     
-    if (movingPlatforms[0].x < 10 || movingPlatforms[0].x > 800) {
+    if (movingPlatforms[0].x < 40 || movingPlatforms[0].x > 1000) {
         movingPlatforms[0].velx *= -1;
     }
     
@@ -232,8 +228,8 @@ function level5(player1) {
         new Platform(150, canvas.height - 20, 100, 20, "red"),
         new Platform(250, canvas.height - 20, 50, 20),
         new Platform(300, canvas.height - 20, 100, 20, "red"),
-        new Platform(400, canvas.height - 20, 100, 20),
-        new Platform(500, canvas.height - 20, 40, 20, "red"),
+        new Platform(400, canvas.height - 20, 50, 20),
+        new Platform(450, canvas.height - 20, 90, 20, "red"),
         new Platform(540, canvas.height - 20, 50, 20),
         new Platform(590, canvas.height - 20, 80, 20, "red"),
         new Platform(670, canvas.height - 20, 50, 20),
@@ -242,7 +238,7 @@ function level5(player1) {
         new Platform(880, canvas.height - 20, 40, 20, "red"),
         new Platform(900, canvas.height - 20, 100, 20),
         new Platform(1000, canvas.height - 20, 100, 20, "red"),
-        new Platform(1100, canvas.height - 20, 200, 20),
+        new Platform(1100, canvas.height - 20, 10, 20),
     ];
 
     // Process platforms
@@ -299,9 +295,6 @@ function level6(player1) {
     
 }
 
-// =============================================================================
-// CONFIGURATION OBJECTS
-// =============================================================================
 
 const AVAILABLE_LABELS = {
     1: level1,
@@ -314,11 +307,5 @@ const AVAILABLE_LABELS = {
 const LEVELS = {
     1: {
         platforms: []
-        // Commented out example structure:
-        // platforms: [{
-        //     "x": 123, "y": -90, "width": 123, "height": 123,
-        // }, {
-        //     "x": 423, "y": -90, "width": 123, "height": 123,
-        // }]
     }
 };
