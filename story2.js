@@ -5,7 +5,7 @@ var container = momEl.parentElement; // the div containing #mom
 // make newlines show as line breaks
 momEl.style.whiteSpace = "pre-wrap";
 
-let conversation = [
+let conversations = [
   "Kash: Shaurya! What are you doing?! Why are you hitting the cats?!\n",
   "Shaurya: I… I'm just… clearing the street to avoid bad luck!\n",
   "Kash: Clearing the street? By hurting cats?!\n",
@@ -65,12 +65,15 @@ document.addEventListener("keydown", e => {
   }
 
   count++;
-  if (count < conversation.length) {
-    
-    typeText(conversation[count]);
+  if (count < conversations.length) {
+        if(count === 8){
+            momEl.textContent = "";
+        }
+    typeText(conversations[count]);
   }
   
-  else if(count >= conversation.length){
+  
+  else if(count >= conversations.length){
      momEl.textContent = "Thanx for playing...";
     typeText();
   }

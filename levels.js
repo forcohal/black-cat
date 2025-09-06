@@ -36,7 +36,7 @@ let movingPlatforms = [
     // Level 4
     new Platform(740, canvas.height - 400, 160, 20, "#a2d2ff"),
     new Platform(540, canvas.height - 400, 160, 20, "#a2d2ff"),
-    new Platform(740, 580, 60, 10, "red"),
+    new Platform(740, canvas.height - 110, 60, 10, "red"),
     new Platform(840, 450, 60, 10, "red"),
     new Platform(740, 320, 60, 10, "red"),
     new Platform(840, 200, 60, 10, "red"),
@@ -93,11 +93,12 @@ function level2(player1, cats) {
     // Static platforms
     let platforms = [
         // Platform 1
-        new Platform(0, 190, 380, 20),
-        new Platform(550, 190, 380, 20),
-        new Platform(700, 340, 380, 20),
-        new Platform(550, 480, 380, 20),
-        new Platform(1050, 190, 30, 150),
+        new Platform(0, canvas.height - 500, 380, 20),
+        new Platform(550, canvas.height - 500, 380, 20),
+        new Platform(700, canvas.height - 340, 380, 20),
+        new Platform(550, canvas.height - 180, 380, 20),
+        new Platform(1050, canvas.height - 480, 30, 150),
+        
 
         
     ];
@@ -182,9 +183,9 @@ function level4(player1, cats) {
     // Static platforms
     let platforms = [
         // Main platforms
-        new Platform(900, 80, 40, 500),
+        new Platform(900, canvas.height - 600, 40, 500),
         new Platform(700, 190, 40, 500),
-        new Platform(500, 100, 40, 430),
+        new Platform(500, canvas.height - 580, 40, 430),
         //RED PLATS
 
         new Platform(640, 580, 60, 10, "red"),

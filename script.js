@@ -597,7 +597,7 @@ function update() {
     player1.isInAir(); 
     player1.death();
     player1.loadLevel(player1,levels, cat)
-    
+    //level3(player1,levels, cat)
     
     
     player1.isColliding(base) 
