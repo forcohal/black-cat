@@ -65,16 +65,13 @@ document.addEventListener("keydown", e => {
   }
 
   count++;
-  if (count < conversation.length - 7) {
-    momEl.textContent = "";
+  if (count < conversation.length) {
+    
     typeText(conversation[count]);
   }
-  else if(count >= conversation.length - 9 && count <= conversation.length){
-    momEl.textContent = "";
-    typeText(conversation[count]);
-  }
+  
   else if(count >= conversation.length){
-     momEl.textContent = "";
+     momEl.textContent = "Thanx for playing...";
     typeText();
   }
 });

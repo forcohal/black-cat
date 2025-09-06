@@ -62,7 +62,7 @@ document.addEventListener("keydown", e => {
   // Not typing: go to the next line
   count++;
   if (count < conversation.length) {
-    momEl.textContent = "";
+    
     typeText(conversation[count]);
   } else if (count === conversation.length) {
     momEl.textContent = "";
@@ -78,7 +78,7 @@ So... a mishap might be waiting to happen.`
     
   }else if (count === conversation.length + 1) {
     momEl.textContent = "";
-    typeText("If the player jumps from a crazy height, they’ll scream (I mean, wouldn’t you?).\nThat scream makes the noise bar shoot up!\nWhen they stomp the ground on landing, the noise bar climbs again.\nAnd the closer they get to the cat, the louder the noise gets—so better tiptoe, buddy!\nOh, and I set the frequency of the noise so only cats and better players can hear it.\nThe levels? Tough but not impossible.\nDon’t ask me though—I couldn’t finish them.\nI made my brother try… he couldn’t either.\nBut hey, maybe you’re a better player than both of us!");
+    typeText("If the player jumps from a crazy height, they’ll scream (I mean, wouldn’t you?).\nThat scream makes the noise bar shoot up!\nWhen they stomp the ground on landing, the noise bar climbs again.\nAnd the closer they get to the cat, the louder the noise gets");
 ;
     
   } else if (count === conversation.length + 2) {

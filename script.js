@@ -1,3 +1,60 @@
+// Audio System Setup
+const VOLUME = 0.8; // Adjust this to control overall volume (0.0 to 1.0)
+const A = new (AudioContext||webkitAudioContext)();
+const G = A.createGain();
+G.connect(A.destination);
+G.gain.value = VOLUME;
+
+// Compact sound functions
+function walk() {
+    const o = A.createOscillator(), g = A.createGain(), t = A.currentTime;
+    o.connect(g); g.connect(G);
+    o.frequency.setValueAtTime(80, t);
+    o.frequency.exponentialRampToValueAtTime(40, t + 0.1);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.6, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+    o.type = 'sawtooth';
+    o.start(t); o.stop(t + 0.15);
+}
+
+function scream() {
+    const o = A.createOscillator(), g = A.createGain(), t = A.currentTime;
+    o.connect(g); g.connect(G);
+    o.frequency.setValueAtTime(800, t);
+    o.frequency.exponentialRampToValueAtTime(200, t + 0.5);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.8, t + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+    o.type = 'sawtooth';
+    o.start(t); o.stop(t + 0.5);
+}
+
+function thud() {
+    const o = A.createOscillator(), g = A.createGain(), t = A.currentTime;
+    o.connect(g); g.connect(G);
+    o.frequency.setValueAtTime(60, t);
+    o.frequency.exponentialRampToValueAtTime(20, t + 0.3);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.9, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+    o.type = 'square';
+    o.start(t); o.stop(t + 0.3);
+}
+
+function warn() {
+    const o = A.createOscillator(), g = A.createGain(), t = A.currentTime;
+    o.connect(g); g.connect(G);
+    o.frequency.setValueAtTime(400, t);
+    o.frequency.linearRampToValueAtTime(600, t + 0.1);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.4, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+    o.type = 'triangle';
+    o.start(t); o.stop(t + 0.1);
+}
+
+// Input handling
 let keys = {}; 
 document.addEventListener("keydown", e => { 
     keys[e.key] = true; 
@@ -376,6 +433,10 @@ class noise{
         this.width = width; 
         this.varWidth = 0.5; 
         this.inc = 7; 
+        this.lastWalk = 0;
+        this.lastThud = 0;
+        this.playedScream = false;
+        this.playedWarning = false;
     }
 
     draw(){ 
@@ -408,7 +469,21 @@ class noise{
     noiseBar(entity,cats){ 
         let collided = entity.isCollided(); 
         var varWidth = this.varWidth; 
+        
         if(collided && entity.moving){ 
+            // Walking sound (throttled)
+            if(Date.now() - this.lastWalk > 200) {
+                walk();
+                this.lastWalk = Date.now();
+            }
+            if(entity.inAir && entity.moving) {
+                // Screaming sound when moving in air (throttled)
+                if(Date.now() - this.lastWalk > 300) {
+                    scream();
+                    this.lastWalk = Date.now();
+                }
+            }
+            
             if(this.varWidth < this.width){ 
                 this.varWidth += this.inc; 
             } 
@@ -419,9 +494,17 @@ class noise{
         } 
         if(entity.restart){ 
             this.varWidth = 0; 
+            this.playedScream = false;
+            this.playedWarning = false;
         } 
         //thamp noise 
         else if(entity.isThamped()){ 
+            // Thud sound for heavy landing
+            if(Date.now() - this.lastThud > 500) {
+                thud();
+                this.lastThud = Date.now();
+            }
+            
             if(this.varWidth < this.width ){ 
                 this.varWidth += this.inc * 6; 
             } else if(this.varWidth += this.inc * 3 >= this.width){ 
@@ -446,7 +529,23 @@ class noise{
             } 
         } 
         
+        // Play warning sound when noise bar is getting full
+        if(this.varWidth > this.width * 0.8 && !this.playedWarning) {
+            warn();
+            this.playedWarning = true;
+        }
+        
+        if(this.varWidth < this.width * 0.7) {
+            this.playedWarning = false;
+        }
+        
         if(entity.dead){ 
+            // Scream when caught/dead
+            if(!this.playedScream) {
+                scream();
+                this.playedScream = true;
+            }
+            
             this.varWidth = 0;
             cats.x = 1200;
             cats.y = 600;
