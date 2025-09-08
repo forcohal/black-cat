@@ -62,7 +62,9 @@ document.addEventListener("keydown", e => {
   // Not typing: go to the next line
   count++;
   if (count < conversation.length) {
-    
+        if(count === 4){
+            momEl.textContent = "";
+        }
     typeText(conversation[count]);
   } else if (count === conversation.length) {
     momEl.textContent = "";

@@ -37,9 +37,9 @@ let movingPlatforms = [
     new Platform(740, canvas.height - 400, 160, 20, "#a2d2ff"),
     new Platform(540, canvas.height - 400, 160, 20, "#a2d2ff"),
     new Platform(740, canvas.height - 110, 60, 10, "red"),
-    new Platform(840, 450, 60, 10, "red"),
-    new Platform(740, 320, 60, 10, "red"),
-    new Platform(840, 200, 60, 10, "red"),
+    new Platform(840, canvas.height - 250, 60, 10, "red"),
+    new Platform(740, canvas.height - 380, 60, 10, "red"),
+    new Platform(840, canvas.height - 480, 60, 10, "red"),
     
     // Level 3
     new Platform(800, canvas.height - 230, 100, 20, "#a2d2ff"),
@@ -83,7 +83,7 @@ function level1(player1, cats) {
 function level2(player1, cats) {
     if (player1.dead || player1.restart) {
         console.log("loaded death : ", player1.dead);
-        player1.reset(50, 100);
+        player1.reset(50, canvas.height - 620);
         cat.reset(1200, 600);
     }    
     
@@ -114,7 +114,7 @@ function level2(player1, cats) {
 function level3(player1, cat) {
     if (player1.dead || player1.restart) {
         console.log("loaded death : ", player1.dead);
-        player1.reset(0, 400);
+        player1.reset(0, canvas.height - 250);
         cat.reset(1200, 600);
     }
     
@@ -184,14 +184,14 @@ function level4(player1, cats) {
     let platforms = [
         // Main platforms
         new Platform(900, canvas.height - 600, 40, 500),
-        new Platform(700, 190, 40, 500),
+        new Platform(700, canvas.height - 490, 40, 500),
         new Platform(500, canvas.height - 580, 40, 430),
         //RED PLATS
 
-        new Platform(640, 580, 60, 10, "red"),
-        new Platform(540, 450, 60, 10, "red"),
-        new Platform(640, 320, 60, 10, "red"),
-        new Platform(540, 200, 60, 10, "red"),
+        new Platform(640, canvas.height - 130, 60, 10, "red"),
+        new Platform(540, canvas.height - 250, 60, 10, "red"),
+        new Platform(640, canvas.height - 380, 60, 10, "red"),
+        new Platform(540, canvas.height - 480, 60, 10, "red"),
 
         
         
@@ -208,7 +208,7 @@ function level4(player1, cats) {
 function level5(player1) {
     if (player1.dead || player1.restart) {
         console.log("loaded death : ", player1.dead);
-        player1.reset(30, canvas.height - 200);
+        player1.reset(30, canvas.height - 120);
         cat.reset(1200, 600);
     } 
     // Moving platform logic
